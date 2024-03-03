@@ -1,0 +1,12 @@
+load("@my_deps//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_library")
+
+# gazelle:python_use_requirement_function true
+
+py_library(
+    name = "directive_use_requirements_function",
+    srcs = ["foo.py"],
+    visibility = ["//:__subpackages__"],
+    deps = [requirement("boto3")],
+)
+
