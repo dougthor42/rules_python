@@ -67,6 +67,7 @@ func (py *Configurer) KnownDirectives() []string {
 		pythonconfig.DefaultVisibilty,
 		pythonconfig.Visibility,
 		pythonconfig.TestFilePattern,
+		pythonconfig.UseRequirementFunction,
 	}
 }
 
@@ -195,6 +196,8 @@ func (py *Configurer) Configure(c *config.Config, rel string, f *rule.File) {
 				}
 			}
 			config.SetTestFilePattern(globStrings)
+		case pythonconfig.UseRequirementFunction:
+			config.SetUseRequirementFunction(strings.TrimSpace(d.Value))
 		}
 	}
 

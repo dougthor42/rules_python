@@ -77,6 +77,8 @@ const (
 	// TestFilePattern represents the directive that controls which python
 	// files are mapped to `py_test` targets.
 	TestFilePattern = "python_test_file_pattern"
+	// Foo
+	UseRequirementFunction = "python_use_requirement_function"
 )
 
 // GenerationModeType represents one of the generation modes for the Python
@@ -156,6 +158,7 @@ type Config struct {
 	defaultVisibility            []string
 	visibility                   []string
 	testFilePattern              []string
+	useRequirementFunction       string
 }
 
 // New creates a new Config.
@@ -180,6 +183,7 @@ func New(
 		defaultVisibility:            []string{fmt.Sprintf(DefaultVisibilityFmtString, "")},
 		visibility:                   []string{},
 		testFilePattern:              strings.Split(DefaultTestFilePatternString, ","),
+		useRequirementFunction:       "false",
 	}
 }
 
@@ -209,6 +213,7 @@ func (c *Config) NewChild() *Config {
 		defaultVisibility:            c.defaultVisibility,
 		visibility:                   c.visibility,
 		testFilePattern:              c.testFilePattern,
+		useRequirementFunction:       c.useRequirementFunction,
 	}
 }
 
@@ -442,4 +447,12 @@ func (c *Config) SetTestFilePattern(patterns []string) {
 // TestFilePattern returns the patterns that should be mapped to 'py_test' rules.
 func (c *Config) TestFilePattern() []string {
 	return c.testFilePattern
+}
+
+func (c *Config) SetUseRequirementFunction(value string) {
+	c.useRequirementFunction = value
+}
+
+func (c *Config) UseRequirementFunction() string {
+	return c.useRequirementFunction
 }
