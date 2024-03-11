@@ -270,9 +270,16 @@ func (c *Config) FindThirdPartyDependency(modName string) (string, bool) {
 				}
 				sanitizedDistribution := SanitizeDistribution(distributionName)
 
-				// @<repository_name>//<distribution_name>
-				lbl := label.New(distributionRepositoryName, sanitizedDistribution, sanitizedDistribution)
-				return lbl.String(), true
+				var depLabel string
+				if currentCfg.useRequirementFunction == "true" {
+					depLabel = fmt.Sprintf(`requirement("%s")`, distributionName)
+				} else {
+					// @<repository_name>//<distribution_name>
+					lbl := label.New(distributionRepositoryName, sanitizedDistribution, sanitizedDistribution)
+					depLabel = lbl.String()
+				}
+
+				return depLabel, true
 			}
 		}
 	}
