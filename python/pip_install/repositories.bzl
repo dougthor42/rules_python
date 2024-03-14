@@ -95,6 +95,105 @@ _RULE_DEPS = [
         "679e51dd4403591b2d6838a48de3d283f3d188412a9782faadf845f298736ba0",
     ),
     # END: maintained by 'bazel run //tools/private/update_deps:update_pip_deps'
+    # START: Patched
+    # Requirements of `keyring`
+    (
+        "pypi__SecretStorage",
+        "https://files.pythonhosted.org/packages/54/24/b4293291fa1dd830f353d2cb163295742fa87f179fcc8a20a306a81978b7/SecretStorage-3.3.3-py3-none-any.whl",
+        "f356e6628222568e3af06f2eba8df495efa13b3b63081dafd4f7d9a7b7bc9f99",
+    ),
+    (
+        "pypi__cffi",
+        "https://files.pythonhosted.org/packages/9b/89/a31c81e36bbb793581d8bba4406a8aac4ba84b2559301c44eef81f4cf5df/cffi-1.16.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+        "7b78010e7b97fef4bee1e896df8a4bbb6712b7f05b7ef630f9d1da00f6444d2e",
+    ),
+    (
+        "pypi__cryptography",
+        "https://files.pythonhosted.org/packages/48/c8/c0962598c43d3cff2c9d6ac66d0c612bdfb1975be8d87b8889960cf8c81d/cryptography-42.0.5-cp39-abi3-manylinux_2_28_x86_64.whl",
+        "cd2030f6650c089aeb304cf093f3244d34745ce0cfcc39f20c6fbfe030102e2a",
+    ),
+    (
+        "pypi__jaraco_classes",
+        "https://files.pythonhosted.org/packages/eb/57/d3590a153d7c1970f466f69fa2570e1a93a34d8f88f23c11411df73729bf/jaraco.classes-3.3.1-py3-none-any.whl",
+        "86b534de565381f6b3c1c830d13f931d7be1a75f0081c57dff615578676e2206",
+    ),
+    (
+        "pypi__jeepney",
+        "https://files.pythonhosted.org/packages/ae/72/2a1e2290f1ab1e06f71f3d0f1646c9e4634e70e1d37491535e19266e8dc9/jeepney-0.8.0-py3-none-any.whl",
+        "c0a454ad016ca575060802ee4d590dd912e35c122fa04e70306de3d076cce755",
+    ),
+    (
+        "pypi__keyring",
+        "https://files.pythonhosted.org/packages/7c/23/d557507915181687e4a613e1c8a01583fd6d7cb7590e1f039e357fe3b304/keyring-24.3.1-py3-none-any.whl",
+        "df38a4d7419a6a60fea5cef1e45a948a3e8430dd12ad88b0f423c5c143906218",
+    ),
+    (
+        "pypi__pycparser",
+        "https://files.pythonhosted.org/packages/62/d5/5f610ebe421e85889f2e55e33b7f9a6795bd982198517d912eb1c76e1a53/pycparser-2.21-py2.py3-none-any.whl",
+        "8ee45429555515e1f6b185e78100aea234072576aa43ab53aefcae078162fca9",
+    ),
+    # Requirements of `keyrings.google-artifactregistry-auth
+    (
+        "pypi__cachetools",
+        "https://files.pythonhosted.org/packages/fb/2b/a64c2d25a37aeb921fddb929111413049fc5f8b9a4c1aefaffaafe768d54/cachetools-5.3.3-py3-none-any.whl",
+        "0abad1021d3f8325b2fc1d2e9c8b9c9d57b04c3932657a72465447332c24d945",
+    ),
+    (
+        "pypi__certifi",
+        "https://files.pythonhosted.org/packages/ba/06/a07f096c664aeb9f01624f858c3add0a4e913d6c96257acb4fce61e7de14/certifi-2024.2.2-py3-none-any.whl",
+        "dc383c07b76109f368f6106eee2b593b04a011ea4d55f652c6ca24a754d1cdd1",
+    ),
+    (
+        "pypi__charset_normalizer",
+        "https://files.pythonhosted.org/packages/40/26/f35951c45070edc957ba40a5b1db3cf60a9dbb1b350c2d5bef03e01e61de/charset_normalizer-3.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+        "753f10e867343b4511128c6ed8c82f7bec3bd026875576dfd88483c5c73b2fd8",
+    ),
+    (
+        "pypi__google_auth",
+        "https://files.pythonhosted.org/packages/92/94/35ba55b5011185ea1c995938e7851b25e6092f15658afa9263cd65a67dd4/google_auth-2.28.2-py2.py3-none-any.whl",
+        "9fd67bbcd40f16d9d42f950228e9cf02a2ded4ae49198b27432d0cded5a74c38",
+    ),
+    (
+        "pypi__idna",
+        "https://files.pythonhosted.org/packages/c2/e7/a82b05cf63a603df6e68d59ae6a68bf5064484a0718ea5033660af4b54a9/idna-3.6-py3-none-any.whl",
+        "c05567e9c24a6b9faaa835c4821bad0590fbb9d5779e7caa6e1cc4978e7eb24f",
+    ),
+    (
+        "pypi__keyrings_google_artifactregistry_auth",
+        "https://files.pythonhosted.org/packages/dc/a0/9698d906772b8c445f502e30c9408314998b29a0ee9fb22d849433a8146b/keyrings.google_artifactregistry_auth-1.1.2-py3-none-any.whl",
+        "e3f18b50fa945c786593014dc225810d191671d4f5f8e12d9259e39bad3605a3",
+    ),
+    (
+        "pypi__pluggy",
+        "https://files.pythonhosted.org/packages/a5/5b/0cc789b59e8cc1bf288b38111d002d8c5917123194d45b29dcdac64723cc/pluggy-1.4.0-py3-none-any.whl",
+        "7db9f7b503d67d1c5b95f59773ebb58a8c1c288129a88665838012cfb07b8981",
+    ),
+    (
+        "pypi__pyasn1",
+        "https://files.pythonhosted.org/packages/d1/75/4686d2872bf2fc0b37917cbc8bbf0dd3a5cdb0990799be1b9cbf1e1eb733/pyasn1-0.5.1-py2.py3-none-any.whl",
+        "4439847c58d40b1d0a573d07e3856e95333f1976294494c325775aeca506eb58",
+    ),
+    (
+        "pypi__pyasn1_modules",
+        "https://files.pythonhosted.org/packages/cd/8e/bea464350e1b8c6ed0da3a312659cb648804a08af6cacc6435867f74f8bd/pyasn1_modules-0.3.0-py2.py3-none-any.whl",
+        "d3ccd6ed470d9ffbc716be08bd90efbd44d0734bc9303818f7336070984a162d",
+    ),
+    (
+        "pypi__requests",
+        "https://files.pythonhosted.org/packages/70/8e/0e2d847013cb52cd35b38c009bb167a1a26b2ce6cd6965bf26b47bc0bf44/requests-2.31.0-py3-none-any.whl",
+        "58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f",
+    ),
+    (
+        "pypi__rsa",
+        "https://files.pythonhosted.org/packages/49/97/fa78e3d2f65c02c8e1268b9aba606569fe97f6c8f7c2d74394553347c145/rsa-4.9-py3-none-any.whl",
+        "90260d9058e514786967344d0ef75fa8727eed8a7d2e43ce9f4bcf1b536174f7",
+    ),
+    (
+        "pypi__urllib3",
+        "https://files.pythonhosted.org/packages/a2/73/a68704750a7679d0b6d3ad7aa8d4da8e14e151ae82e6fee774e6e0d05ec8/urllib3-2.2.1-py3-none-any.whl",
+        "450b20ec296a467077128bff42b73080516e71b56ff59a60a02bef2232c4fa9d",
+    ),
+    # END: Patched
 ]
 
 _GENERIC_WHEEL = """\
@@ -133,6 +232,7 @@ def pip_install_dependencies():
     """
     Fetch dependencies these rules depend on. Workspaces that use the pip_parse rule can call this.
     """
+    print("Doug was here")
     for (name, url, sha256) in _RULE_DEPS:
         maybe(
             http_archive,

@@ -34,6 +34,29 @@ use_repo(
     "pypi__wheel",
     "pypi__zipp",
     # END: maintained by 'bazel run //tools/private/update_deps:update_pip_deps'
+    # START: Patched
+    # Requirements of `keyring`
+    "pypi__SecretStorage",
+    "pypi__cffi",
+    "pypi__cryptography",
+    "pypi__jaraco_classes",
+    "pypi__jeepney",
+    "pypi__keyring",
+    "pypi__pycparser",
+    # Requirements of `keyrings.google-artifactregistry-auth
+    "pypi__cachetools",
+    "pypi__certifi",
+    "pypi__charset_normalizer",
+    "pypi__google_auth",
+    "pypi__idna",
+    "pypi__keyrings_google_artifactregistry_auth",
+    "pypi__pluggy",
+    "pypi__pyasn1",
+    "pypi__pyasn1_modules",
+    "pypi__requests",
+    "pypi__rsa",
+    "pypi__urllib3",
+    # END: Patched
 )
 
 # We need to do another use_extension call to expose the "pythons_hub"

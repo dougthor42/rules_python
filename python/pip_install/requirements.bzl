@@ -124,6 +124,29 @@ def compile_pip_requirements(
         requirement("tomli"),
         requirement("zipp"),
         Label("//python/runfiles:runfiles"),
+        # START: Patched
+        # Requirements of `keyring`
+        requirement("SecretStorage"),
+        requirement("cffi"),
+        requirement("cryptography"),
+        requirement("jaraco_classes"),
+        requirement("jeepney"),
+        requirement("keyring"),
+        requirement("pycparser"),
+        # Requirements of `keyrings.google-artifactregistry-auth
+        requirement("cachetools"),
+        requirement("certifi"),
+        requirement("charset_normalizer"),
+        requirement("google_auth"),
+        requirement("idna"),
+        requirement("keyrings_google_artifactregistry_auth"),
+        requirement("pluggy"),
+        requirement("pyasn1"),
+        requirement("pyasn1_modules"),
+        requirement("requests"),
+        requirement("rsa"),
+        requirement("urllib3"),
+        # END: Patched
     ] + extra_deps
 
     tags = tags or []
