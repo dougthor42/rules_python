@@ -113,7 +113,7 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 				hasPyTestEntryPointFile = true
 			} else if f == conftestFilename {
 				hasConftestFile = true
-			} else if strings.HasSuffix(f, "_test.py") || strings.HasPrefix(f, "test_") {
+			} else if strings.HasSuffix(f, "_test.py") {
 				pyTestFilenames.Add(f)
 			} else {
 				pyLibraryFilenames.Add(f)
@@ -195,7 +195,7 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 							}
 						}
 						baseName := filepath.Base(path)
-						if strings.HasSuffix(baseName, "_test.py") || strings.HasPrefix(baseName, "test_") {
+						if strings.HasSuffix(baseName, "_test.py") {
 							pyTestFilenames.Add(srcPath)
 						} else {
 							pyLibraryFilenames.Add(srcPath)

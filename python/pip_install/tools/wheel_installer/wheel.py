@@ -606,6 +606,10 @@ class Wheel:
             "scripts": "/bin",
             "data": "/data",
         }
+
+        # Hack
+        overwrite = "qtconsole" in str(self.path)
+
         destination = installer.destinations.SchemeDictionaryDestination(
             installation_schemes,
             # TODO Should entry_point scripts also be handled by installer rather than custom code?
@@ -613,6 +617,7 @@ class Wheel:
             script_kind="posix",
             destdir=directory,
             bytecode_optimization_levels=[],
+            overwrite_existing = overwrite,
         )
 
         with installer.sources.WheelFile.open(self.path) as wheel_source:
