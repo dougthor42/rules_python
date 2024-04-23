@@ -497,8 +497,8 @@ target, building will result in an error saying:
 <target> does not have mandatory providers: 'PyInfo' or 'CcInfo' or 'PyInfo'.
 ```
 
-Adding non-Python targets to the generated target is a feature request being
-tracked in [Issue #1865](https://github.com/bazelbuild/rules_python/issues/1865).
+Adding non-Python targets as `data` to the generated target can be done using
+the [`include_data`](#annotation-include_data) annotation.
 
 The annotation can be added multiple times, and all values are combined
 and de-duplicated.
@@ -523,6 +523,38 @@ deps = [
     "//:def",
     "//foo:bar",
     "@pypi//numpy",
+]
+```
+
+
+#### Annotation: `include_data`:
+
+This annotation accepts a comma-separated string of values. Values are other
+Bazel targets. No validation is done to ensure that the value "looks" like a
+target or to ensure that the target exists.
+
+Adding Python targets as `deps` to the generated target can be done using
+the [`include_dep`](#annotation-include_dep) annotation.
+
+The annotation can be added multiple times, and all values are combined
+and de-duplicated.
+
+For `python_generation_mode = "package"`, the `include_data` annotations
+found across all files included in the generated target are included in `data`.
+
+Example:
+
+```python
+# gazelle:include_data //foo/bar/test_data:csv_files,//foo/bar/test_data:json_files
+TEST_DATA_DIR = pathlib.Path(__file__).parent / "test_data"
+```
+
+will cause Gazelle to generate:
+
+```starlark
+data = [
+    "//foo/bar/test_data:csv_files",
+    "//foo/bar/test_data:json_files",
 ]
 ```
 
