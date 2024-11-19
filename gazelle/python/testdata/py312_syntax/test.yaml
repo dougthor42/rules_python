@@ -1,0 +1,4 @@
+---
+expect:
+  stderr: |
+    gazelle: WARNING: failed to parse "pep_695_type_parameter.py". The resulting BUILD target may be incorrect.
