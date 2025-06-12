@@ -1,11 +1,11 @@
 module github.com/bazel-contrib/rules_python/gazelle
 
-go 1.22.0
+go 1.22.9
 
 toolchain go1.24.2
 
 require (
-	github.com/bazelbuild/bazel-gazelle v0.40.0
+	github.com/bazelbuild/bazel-gazelle v0.42.0
 	github.com/bazelbuild/buildtools v0.0.0-20240918101019-be1c24cc9a44
 	github.com/bazelbuild/rules_go v0.55.0
 	github.com/bmatcuk/doublestar/v4 v4.7.1
