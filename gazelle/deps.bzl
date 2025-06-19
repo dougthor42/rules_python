@@ -14,10 +14,9 @@
 
 "This file managed by `bazel run //:gazelle_update_repos`"
 
-load("@bazel_gazelle//:deps.bzl", _go_repository = "go_repository")
+load("@bazel_gazelle//:deps.bzl", "gazell_dependencies", _go_repository = "go_repository")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
-load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+load("@io_bazel_rules_go//go:deps.bzl", "go_rules_dependencies")
 
 def go_repository(name, **kwargs):
     if name not in native.existing_rules():
