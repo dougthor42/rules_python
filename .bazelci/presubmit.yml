@@ -241,6 +241,8 @@ tasks:
     <<: *common_workspace_flags
     build_flags:
       - "--action_env=CGO_ENABLED=1"
+    test_flags:
+      - "--test_env=CGO_ENABLED=1"
     name: "examples/build_file_generation: Windows, workspace"
     working_directory: examples/build_file_generation
     platform: windows
@@ -342,6 +344,8 @@ tasks:
     # coverage is not supported on Windows
     build_flags:
       - "--action_env=CGO_ENABLED=1"
+    test_flags:
+      - "--test_env=CGO_ENABLED=1"
     name: "examples/bzlmod_build_file_generateion: Windows"
     working_directory: examples/bzlmod_build_file_generation
     platform: windows
