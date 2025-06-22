@@ -159,7 +159,6 @@ tasks:
       - "--enable_workspace"
       - "--keep_going"
       - "--build_tag_filters=-integration-test"
-      - "--action_env=CGO_ENABLED=1"
     test_targets:
       - "--"
       - "..."
@@ -240,6 +239,8 @@ tasks:
   integration_test_build_file_generation_windows_workspace:
     <<: *reusable_build_test_all
     <<: *common_workspace_flags
+    build_flags:
+      - "--action_env=CGO_ENABLED=1"
     name: "examples/build_file_generation: Windows, workspace"
     working_directory: examples/build_file_generation
     platform: windows
@@ -339,6 +340,8 @@ tasks:
   integration_test_bzlmod_build_file_generation_windows:
     <<: *reusable_build_test_all
     # coverage is not supported on Windows
+    build_flags:
+      - "--action_env=CGO_ENABLED=1"
     name: "examples/bzlmod_build_file_generateion: Windows"
     working_directory: examples/bzlmod_build_file_generation
     platform: windows
