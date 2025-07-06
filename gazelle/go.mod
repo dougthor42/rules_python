@@ -1,6 +1,6 @@
 module github.com/bazel-contrib/rules_python/gazelle
 
-go 1.22.9
+go 1.21.12
 
 toolchain go1.24.2
 
