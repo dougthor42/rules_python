@@ -72,12 +72,6 @@ def go_deps():
         version = "v1.1.1",
     )
     go_repository(
-        name = "com_github_dougthor42_go_tree_sitter",
-        importpath = "github.com/dougthor42/go-tree-sitter",
-        sum = "h1:b9s96BulIARx0konX36sJ5oZhWvAvjQBBntxp1eUukQ=",
-        version = "v0.0.0-20241210060307-2737e1d0de6b",
-    )
-    go_repository(
         name = "com_github_emirpasic_gods",
         importpath = "github.com/emirpasic/gods",
         sum = "h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=",
@@ -124,6 +118,12 @@ def go_deps():
         importpath = "github.com/pmezard/go-difflib",
         sum = "h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=",
         version = "v1.0.0",
+    )
+    go_repository(
+        name = "com_github_smacker_go_tree_sitter",
+        importpath = "github.com/smacker/go-tree-sitter",
+        sum = "h1:6C8qej6f1bStuePVkLSFxoU22XBS165D3klxlzRg8F4=",
+        version = "v0.0.0-20240827094217-dd81d9e9be82",
     )
     go_repository(
         name = "com_github_stretchr_objx",
