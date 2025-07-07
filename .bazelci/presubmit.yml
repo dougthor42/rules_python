@@ -90,7 +90,7 @@ tasks:
   gazelle_extension_min:
     <<: *common_workspace_flags_min_bazel
     <<: *minimum_supported_version
-    name: "Gazelle: workspace, minumum supported Bazel version"
+    name: "Gazelle: workspace, minimum supported Bazel version"
     platform: ubuntu2004
     build_targets: ["//..."]
     test_targets: ["//..."]
@@ -272,6 +272,15 @@ tasks:
     working_directory: examples/bzlmod
     platform: debian11
     bazel: 7.x
+  integration_test_bzlmod_ubuntu_vendor:
+    <<: *reusable_build_test_all
+    name: "examples/bzlmod: bazel vendor"
+    working_directory: examples/bzlmod
+    platform: ubuntu2004
+    shell_commands:
+    - "bazel vendor --vendor_dir=./vendor //..."
+    - "bazel build --vendor_dir=./vendor //..."
+    - "rm -rf ./vendor"
   integration_test_bzlmod_macos:
     <<: *reusable_build_test_all
     <<: *coverage_targets_example_bzlmod
@@ -338,7 +347,7 @@ tasks:
   integration_test_bzlmod_build_file_generation_windows:
     <<: *reusable_build_test_all
     # coverage is not supported on Windows
-    name: "examples/bzlmod_build_file_generateion: Windows"
+    name: "examples/bzlmod_build_file_generation: Windows"
     working_directory: examples/bzlmod_build_file_generation
     platform: windows
 
