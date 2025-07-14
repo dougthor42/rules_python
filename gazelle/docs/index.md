@@ -1,5 +1,14 @@
 # Gazelle plugin
 
+Hey DOUG
+
+```{toctree}
+index
+directives
+annotations
+development
+```
+
 [Gazelle](https://github.com/bazelbuild/bazel-gazelle)
 is a build file generator for Bazel projects. It can create new `BUILD.bazel` files for a project that follows language conventions and update existing build files to include new sources, dependencies, and options.
 
