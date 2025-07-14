@@ -25,14 +25,14 @@ The annotations are:
   * Default: N/A
   * Tells Gazelle to ignore import statements. `imports` is a comma-separated list
     of imports to ignore.
-* [`# gazelle:include_dep targets`](#annotation-include_dep)
+* [`# gazelle:include_dep targets`](#annotation-include-dep)
   * Default: N/A
   * Tells Gazelle to include a set of dependencies, even if they are not imported in
     a Python module. `targets` is a comma-separated list of target names to
     include as dependencies.
 
 
-#### Annotation: `ignore`
+## Annotation: `ignore`
 
 This annotation accepts a comma-separated string of values. Values are names of Python
 imports that Gazelle should _not_ include in target dependencies.
@@ -63,7 +63,7 @@ deps = ["@pypi//numpy"],
 ```
 
 
-#### Annotation: `include_dep`
+## Annotation: `include_dep`
 
 This annotation accepts a comma-separated string of values. Values _must_
 be Python targets, but _no validation is done_. If a value is not a Python
