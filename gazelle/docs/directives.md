@@ -1,0 +1,647 @@
+# Directives
+
+You can configure the extension using directives, just like for other
+languages. These are just comments in the {code}`BUILD.bazel` file which
+govern behavior of the extension when processing files under that
+folder.
+
+See the [Gazelle docs on directives][gazelle-directives] for some general
+directives that may be useful. In particular, the {code}`resolve` directive
+is language-specific and can be used with Python. Examples of these and
+the Python-specific directives in use can be found in the
+{gh-path}`gazelle/testdata` folder in the {code}`rules_python` repo.
+
+[gazelle-directives]: https://github.com/bazelbuild/bazel-gazelle#directives
+
+The Python-specific directives are:
+
+* [{code}`# gazelle:python_extension`](#python-extension)
+  * Default: {code}`enabled`
+  * Allowed Values: {code}`enabled`, {code}`disabled`
+  * Controls whether the Python extension is enabled or not. Sub-packages
+    inherit this value.
+* [{code}`# gazelle:python_root`](#python-root)
+  * Default: N/A
+  * Allowed Values: None. This direcive does not consume values.
+  * Sets a Bazel package as a Python root. This is used on monorepos with
+    multiple Python projects that don't share the top-level of the workspace
+    as the root.
+* [{code}`# gazelle:python_manifest_file_name`](#python-manifest-file-name)
+  * Default: {code}`gazelle_python.yaml`
+  * Allowed Values: A string
+  * Overrides the default manifest file name.
+* [{code}`# gazelle:python_ignore_files`](#python-ignore-files)
+  * Default: N/A
+  * Allowed Values: WIP
+  * Controls the files which are ignored from the generated targets.
+* [{code}`# gazelle:python_ignore_dependencies`](#python-ignore-dependencies)
+  * Default: N/A
+  * Allowed Values: WIP
+  * Controls the ignored dependencies from the generated targets.
+* [{code}`# gazelle:python_validate_import_statements`](#python-validate-import-statements)
+  * Default: {code}`true`
+  * Allowed Values: {code}`true`, {code}`false`
+  * Controls whether the Python import statements should be validated.
+* [{code}`# gazelle:python_generation_mode`](#python-generation-mode)
+  * Default: {code}`package`
+  * Allowed Values: {code}`file`, {code}`package`, {code}`project`
+  * Controls the target generation mode.
+* [{code}`# gazelle:python_generation_mode_per_file_include_init`](#python-generation-mode-per-file-include-init)
+  * Default: {code}`false`
+  * Allowed Values: {code}`true`, {code}`false`
+  * Controls whether {code}`__init__.py` files are included as srcs in each
+    generated target when target generation mode is "file".
+* [{code}`# gazelle:python_generation_mode_per_package_require_test_entry_point`](python-generation-mode-per-package-require-test-entry-point)
+  * Default: {code}`true`
+  * Allowed Values: {code}`true`, {code}`false`
+  * Controls whether a file called {code}`__test__.py` or a target called
+    {code}`__test__` is required to generate one test target per package in
+    package mode.
+* [{code}`# gazelle:python_library_naming_convention`](#python-library-naming-convention)
+  * Default: {code}`$package_name$`
+  * Allowed Values: A string containing {code}`"$package_name$"`
+  * Controls the {bzl:obj}`py_library` naming convention. It interpolates
+    {code}`$package_name$` with the Bazel package name. E.g. if the Bazel package
+    name is {code}`foo`, setting this to {code}`$package_name$_my_lib` would result in a
+    generated target named {code}`foo_my_lib`.
+* [{code}`# gazelle:python_binary_naming_convention`](#python-binary-naming-convention)
+  * Default: {code}`$package_name$_bin`
+  * Allowed Values: A string containing {code}`"$package_name$"`
+  * Controls the {bzl:obj}`py_binary` naming convention. Follows the same interpolation
+    rules as {code}`python_library_naming_convention`.
+* [{code}`# gazelle:python_test_naming_convention`](#python-test-naming-convention)
+  * Default: {code}`$package_name$_test`
+  * Allowed Values: A string containing {code}`"$package_name$"`
+  * Controls the {bzl:obj}`py_test` naming convention. Follows the same interpolation
+    rules as {code}`python_library_naming_convention`.
+* [{code}`# gazelle:python_proto_naming_convention`](#python-proto-naming-convention)
+  * Default: {code}`$proto_name$_py_pb2`
+  * Allowed Values: A string containing {code}`"$proto_name$"`
+  * Controls the {bzl:obj}`py_proto_library` naming convention. It interpolates
+    {code}`$proto_name$` with the {bzl:obj}`proto_library` rule name, minus any trailing
+    {code}`_proto`. E.g. if the {bzl:obj}`proto_library` name is {code}`foo_proto`, setting this
+    to {code}`$proto_name$_my_lib` would render to {code}`foo_my_lib`.
+* [{code}`# gazelle:resolve py ...`](#resolve-py)
+  * Default: N/A
+  * Allowed Values: See the [bazel-gazelle docs][gazelle-directives]
+  * Instructs the plugin what target to add as a dependency to satisfy a given
+    import statement. The syntax is {code}`# gazelle:resolve py import-string label`
+    where {code}`import-string` is the symbol in the python {code}`import` statement,
+    and {code}`label` is the Bazel label that Gazelle should write in {code}`deps`.
+* [{code}`# gazelle:python_default_visibility labels`](python-default-visibility)
+  * Default: {code}`//$python_root$:__subpackages__`
+  * Allowed Values: A string
+  * Instructs gazelle to use these visibility labels on all python targets.
+    {code}`labels` is a comma-separated list of labels (without spaces).
+* [{code}`# gazelle:python_visibility label`](python-visibility)
+  * Default: N/A
+  * Allowed Values: A string
+  * Appends additional visibility labels to each generated target. This r
+    directive can be set multiple times.
+* [{code}`# gazelle:python_test_file_pattern`](python-test-file-pattern)
+  * Default: {code}`*_test.py,test_*.py`
+  * Allowed Values: A glob string
+  * Filenames matching these comma-separated {command}`glob`s will be mapped to
+    {bzl:obj}`py_test` targets.
+* [{code}`# gazelle:python_label_convention`](#python-label-convention)
+  * Default: {code}`$distribution_name$`
+  * Allowed Values: A string
+  * Defines the format of the distribution name in labels to third-party deps.
+    Useful for using Gazelle plugin with other rules with different repository
+    conventions (e.g. {code}`rules_pycross`). Full label is always prepended with
+    the {code}`pip` repository name, e.g. {code}`@pip//numpy` if your
+    {code}`MODULE.bazel` has {code}`use_repo(pip, "pip")` or {code}`@pypi//numpy`
+    if your {code}`MODULE.bazel` has {code}`use_repo(pip, "pypi")`.
+* [{code}`# gazelle:python_label_normalization`](#python-label-normalization)
+  * Default: {code}`snake_case`
+  * Allowed Values: {code}`snake_case`, {code}`none`, {code}`pep503`
+  * Controls how distribution names in labels to third-party deps are
+    normalized. Useful for using Gazelle plugin with other rules with different
+    label conventions (e.g. {code}`rules_pycross` uses PEP-503).
+* [{code}`# gazelle:python_experimental_allow_relative_imports`](#python-experimental-allow-relative-imports)
+  * Default: {code}`false`
+  * Allowed Values: {code}`true`, {code}`false`
+  * Controls whether Gazelle resolves dependencies for import statements that
+    use paths relative to the current package.
+* [{code}`# gazelle:python_generate_pyi_deps`](#python-generate-pyi-deps)
+  * Default: {code}`false`
+  * Allowed Values: {code}`true`, {code}`false`
+  * Controls whether to generate a separate {code}`pyi_deps` attribute for
+    type-checking dependencies or merge them into the regular {code}`deps`
+    attribute. When {code}`false` (default), type-checking dependencies are
+    merged into {code}`deps` for backward compatibility. When {code}`true`, generates
+    separate {code}`pyi_deps`. Imports in blocks with the format
+    {code}`if typing.TYPE_CHECKING:` or {code}`if TYPE_CHECKING:` and type-only stub
+    packages (eg. boto3-stubs) are recognized as type-checking dependencies.
+* [{code}`# gazelle:python_generate_proto`](#python-generate-proto)
+  * Default: {code}`false`
+  * Allowed Values: {code}`true`, {code}`false`
+  * Controls whether to generate a {bzl:obj}`py_proto_library` for each
+    {bzl:obj}`proto_library` in the package. By default we load this rule from the
+    {code}`@protobuf` repository; use {code}`gazelle:map_kind` if you need to load this
+    from somewhere else.
+* [{code}`# gazelle:python_resolve_sibling_imports`](#python-resolve-sibling-imports)
+  * Default: {code}`false`
+  * Allowed Values: {code}`true`, {code}`false`
+  * Allows absolute imports to be resolved to sibling modules (Python 2's
+    behavior without {code}`absolute_import`).
+
+
+## {code}`python_extension`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_root`
+
+Set this directive within the Bazel package that you want to use as the Python root.
+For example, if using a {code}`src` dir (as recommended by the [Python Packaging User
+Guide][python-packaging-user-guide]), then set this directive in {code}`src/BUILD.bazel`:
+
+```starlark
+# ./src/BUILD.bazel
+# Tell gazelle that are python root is the same dir as this Bazel package.
+# gazelle:python_root
+```
+
+Note that the directive does not have any arguments.
+
+Gazelle will then add the necessary {code}`imports` attribute to all targets that it
+generates:
+
+```starlark
+# in ./src/foo/BUILD.bazel
+py_libary(
+    ...
+    imports = [".."],  # Gazelle adds this
+    ...
+)
+
+# in ./src/foo/bar/BUILD.bazel
+py_libary(
+    ...
+    imports = ["../.."],  # Gazelle adds this
+    ...
+)
+```
+
+[python-packaging-user-guide]: https://github.com/pypa/packaging.python.org/blob/4c86169a/source/tutorials/packaging-projects.rst
+
+
+## {code}`python_manifest_file_name`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_ignore_files`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_ignore_dependencies`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_validate_import_statements`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_generation_mode`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_generation_mode_per_file_include_init`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_generation_mode_per_package_require_test_entry_point`
+
+When {code}`# gazelle:python_generation_mode package`, whether a file called
+{code}`__test__.py` or a target called {code}`__test__`, a.k.a., entry point, is required
+to generate one test target per package. If this is set to true but no entry
+point is found, Gazelle will fall back to file mode and generate one test target
+per file. Setting this directive to false forces Gazelle to generate one test
+target per package even without entry point. However, this means the {code}`main`
+attribute of the {bzl:obj}`py_test` will not be set and the target will not be runnable
+unless either:
+
+1.  there happen to be a file in the {code}`srcs` with the same name as the {bzl:obj}`py_test`
+    target, or
+2.  a macro populating the {code}`main` attribute of {bzl:obj}`py_test` is configured with
+    {code}`gazelle:map_kind` to replace {bzl:obj}`py_test` when Gazelle is generating Python
+    test targets. For example, user can provide such a macro to Gazelle:
+
+```starlark
+load("@rules_python//python:defs.bzl", _py_test="py_test")
+load("@aspect_rules_py//py:defs.bzl", "py_pytest_main")
+
+def py_test(name, main=None, **kwargs):
+    deps = kwargs.pop("deps", [])
+    if not main:
+        py_pytest_main(
+            name = "__test__",
+            deps = ["@pip_pytest//:pkg"],  # change this to the pytest target in your repo.
+        )
+
+        deps.append(":__test__")
+        main = ":__test__.py"
+
+    _py_test(
+        name = name,
+        main = main,
+        deps = deps,
+        **kwargs,
+)
+```
+
+
+## {code}`python_library_naming_convention`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_binary_naming_convention`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_test_naming_convention`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_proto_naming_convention`
+
+Set this directive to a string pattern to control how the generated
+{bzl:obj}`py_proto_library` targets are named. When generating new
+{bzl:obj}`py_proto_library` rules, Gazelle will replace {code}`$proto_name$` in the
+pattern with the name of the {bzl:obj}`proto_library` rule, stripping out a
+trailing {code}`_proto`. For example:
+
+```starlark
+# gazelle:python_generate_proto true
+# gazelle:python_proto_naming_convention my_custom_$proto_name$_pattern
+
+proto_library(
+    name = "foo_proto",
+    srcs = ["foo.proto"],
+)
+```
+
+produces the following {bzl:obj}`py_proto_library` rule:
+
+```starlark
+py_proto_library(
+    name = "my_custom_foo_pattern",
+    deps = [":foo_proto"],
+)
+```
+
+The default naming convention is {code}`$proto_name$_pb2_py` in accordance with
+the [Bazel `py_proto_library` convention][bazel-py-proto-library], so by default
+in the above example Gazelle would generate {code}`foo_pb2_py`. Any pre-existing
+rules are left in place and not renamed.
+
+[bazel-py-proto-library]: https://bazel.build/reference/be/protocol-buffer#py_proto_library
+
+Note that the Python library will always be imported as {code}`foo_pb2` in Python
+code, regardless of the naming convention. Also note that Gazelle is currently
+not able to map said imports, e.g. {code}`import foo_pb2`, to fill in
+{bzl:obj}`py_proto_library` targets as dependencies of other rules. See
+{gh-issue}`1703`.
+
+
+## {code}`resolve py`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_default_visibility`
+
+Instructs gazelle to use these visibility labels on all _python_ targets
+(typically {code}`py_*`, but can be modified via the {code}`map_kind` directive). The arg
+to this directive is a comma-separated list (without spaces) of labels.
+
+For example:
+
+```starlark
+# gazelle:python_default_visibility //:__subpackages__,//tests:__subpackages__
+```
+
+produces the following visibility attribute:
+
+```starlark
+py_library(
+    ...,
+    visibility = [
+        "//:__subpackages__",
+        "//tests:__subpackages__",
+    ],
+    ...,
+)
+```
+
+You can also inject the {code}`python_root` value by using the exact string
+{code}`$python_root$`. All instances of this string will be replaced by the {code}`python_root`
+value.
+
+```starlark
+# gazelle:python_default_visibility //$python_root$:__pkg__,//foo/$python_root$/tests:__subpackages__
+
+# Assuming the "# gazelle:python_root" directive is set in ./py/src/BUILD.bazel,
+# the results will be:
+py_library(
+    ...,
+    visibility = [
+        "//foo/py/src/tests:__subpackages__",  # sorted alphabetically
+        "//py/src:__pkg__",
+    ],
+    ...,
+)
+```
+
+Two special values are also accepted as an argument to the directive:
+
+* {code}`NONE`: This removes all default visibility. Labels added by the
+  {code}`python_visibility` directive are still included.
+* {code}`DEFAULT`: This resets the default visibility.
+
+For example:
+
+```starlark
+# gazelle:python_default_visibility NONE
+
+py_library(
+    name = "...",
+    srcs = [...],
+)
+```
+
+```starlark
+# gazelle:python_default_visibility //foo:bar
+# gazelle:python_default_visibility DEFAULT
+
+py_library(
+    ...,
+    visibility = ["//:__subpackages__"],
+    ...,
+)
+```
+
+These special values can be useful for sub-packages.
+
+
+## {code}`python_visibility`
+
+Appends additional {code}`visibility` labels to each generated target.
+
+This directive can be set multiple times. The generated {code}`visibility` attribute
+will include the default visibility and all labels defined by this directive.
+All labels will be ordered alphabetically.
+
+```starlark
+# ./BUILD.bazel
+# gazelle:python_visibility //tests:__pkg__
+# gazelle:python_visibility //bar:baz
+
+py_library(
+   ...
+   visibility = [
+       "//:__subpackages__",  # default visibility
+       "//bar:baz",
+       "//tests:__pkg__",
+   ],
+   ...
+)
+```
+
+Child Bazel packages inherit values from parents:
+
+```starlark
+# ./bar/BUILD.bazel
+# gazelle:python_visibility //tests:__subpackages__
+
+py_library(
+   ...
+   visibility = [
+       "//:__subpackages__",       # default visibility
+       "//bar:baz",                # defined in ../BUILD.bazel
+       "//tests:__pkg__",          # defined in ../BUILD.bazel
+       "//tests:__subpackages__",  # defined in this ./BUILD.bazel
+   ],
+   ...
+)
+
+```
+
+This directive also supports the {code}`$python_root$` placeholder that
+{code}`# gazelle:python_default_visibility` supports.
+
+```starlark
+# gazlle:python_visibility //$python_root$/foo:bar
+
+py_library(
+    ...
+    visibility = ["//this_is_my_python_root/foo:bar"],
+    ...
+)
+```
+
+
+## {code}`python_test_file_pattern`
+
+This directive adjusts which python files will be mapped to the {bzl:obj}`py_test` rule.
+
++ The default is {code}`*_test.py,test_*.py`: both {code}`test_*.py` and {code}`*_test.py` files
+  will generate {bzl:obj}`py_test` targets.
++ This directive must have a value. If no value is given, an error will be raised.
++ It is recommended, though not necessary, to include the {code}`.py` extension in
+  the {command}`glob`: {code}`foo*.py,?at.py`.
++ Like most directives, it applies to the current Bazel package and all subpackages
+  until the directive is set again.
++ This directive accepts multiple {command}`glob` patterns, separated by commas without spaces:
+
+```starlark
+# gazelle:python_test_file_pattern foo*.py,?at
+
+py_library(
+    name = "mylib",
+    srcs = ["mylib.py"],
+)
+
+py_test(
+    name = "foo_bar",
+    srcs = ["foo_bar.py"],
+)
+
+py_test(
+    name = "cat",
+    srcs = ["cat.py"],
+)
+
+py_test(
+    name = "hat",
+    srcs = ["hat.py"],
+)
+```
+
+
+### Notes
+
+Resetting to the default value (such as in a subpackage) is manual. Set:
+
+```starlark
+# gazelle:python_test_file_pattern *_test.py,test_*.py
+```
+
+There currently is no way to tell gazelle that _no_ files in a package should
+be mapped to {bzl:obj}`py_test` targets (see {gh-issue}`1826`). The workaround
+is to set this directive to a pattern that will never match a {code}`.py` file, such
+as {code}`foo.bar`:
+
+```starlark
+# No files in this package should be mapped to py_test targets.
+# gazelle:python_test_file_pattern foo.bar
+
+py_library(
+    name = "my_test",
+    srcs = ["my_test.py"],
+)
+```
+
+
+## {code}`python_label_convention`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_label_normalization`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_experimental_allow_relative_imports`
+
+Enables experimental support for resolving relative imports in
+{code}`python_generation_mode package`.
+
+By default, when {code}`# gazelle:python_generation_mode package` is enabled,
+relative imports (e.g., {code}`from .library import foo`) are not added to the
+deps field of the generated target. This results in incomplete {bzl:obj}`py_library`
+rules that lack required dependencies on sibling packages.
+
+Example:
+
+Given this Python file import:
+
+```python
+from .library import add as _add
+from .library import subtract as _subtract
+```
+
+Expected BUILD file output:
+
+```starlark
+py_library(
+    name = "py_default_library",
+    srcs = ["__init__.py"],
+    deps = [
+        "//example/library:py_default_library",
+    ],
+    visibility = ["//visibility:public"],
+)
+```
+
+Actual output without this annotation:
+
+```starlark
+py_library(
+    name = "py_default_library",
+    srcs = ["__init__.py"],
+    visibility = ["//visibility:public"],
+)
+```
+
+If the directive is set to {code}`true`, gazelle will resolve imports
+that are relative to the current package.
+
+
+## {code}`python_generate_pyi_deps`
+
+:::{error}
+Detailed docs are not yet written.
+:::
+
+
+## {code}`python_generate_proto`
+
+When {code}`# gazelle:python_generate_proto true`, Gazelle will generate one
+{bzl:obj}`py_proto_library` for each {bzl:obj}`proto_library`, generating Python clients for
+protobuf in each package. By default this is turned off. Gazelle will also
+generate a load statement for the {bzl:obj}`py_proto_library` - attempting to detect
+the configured name for the {code}`@protobuf` / {code}`@com_google_protobuf` repo in your
+{code}`MODULE.bazel`, and otherwise falling back to {code}`@com_google_protobuf` for
+compatibility with {code}`WORKSPACE`.
+
+For example, in a package with {code}`# gazelle:python_generate_proto true` and a
+{code}`foo.proto`, if you have both the proto extension and the Python extension
+loaded into Gazelle, you'll get something like:
+
+```starlark
+load("@protobuf//bazel:py_proto_library.bzl", "py_proto_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+
+# gazelle:python_generate_proto true
+
+proto_library(
+    name = "foo_proto",
+    srcs = ["foo.proto"],
+    visibility = ["//:__subpackages__"],
+)
+
+py_proto_library(
+    name = "foo_py_pb2",
+    visibility = ["//:__subpackages__"],
+    deps = [":foo_proto"],
+)
+```
+
+When {code}`false`, Gazelle will ignore any {bzl:obj}`py_proto_library`, including
+previously-generated or hand-created rules.
+
+
+## {code}`python_resolve_sibling_imports`
+
+:::{error}
+Detailed docs are not yet written.
+:::
