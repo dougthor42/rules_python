@@ -43,4 +43,5 @@ the {code}`update` command (the default) does anything for Python code.
 ```{toctree}
 :maxdepth: 1
 installation_and_usage
+annotations
 ```
