@@ -575,12 +575,13 @@ func (py *Python) getRulesWithInvalidSrcs(args language.GenerateArgs, validFiles
 	isTarget := func(src string) bool {
 		return strings.HasPrefix(src, "@") || strings.HasPrefix(src, "//") || strings.HasPrefix(src, ":")
 	}
-	for _, existingRule := range args.File.Rules {
-		actualPyBinaryKind := GetActualKindName(pyBinaryKind, args)
-		actualPyLibraryKind := GetActualKindName(pyLibraryKind, args)
-		actualPyTestKind := GetActualKindName(pyTestKind, args)
 
-		kinds := []string{actualPyBinaryKind, actualPyLibraryKind, actualPyTestKind}
+	actualPyBinaryKind := GetActualKindName(pyBinaryKind, args)
+	actualPyLibraryKind := GetActualKindName(pyLibraryKind, args)
+	actualPyTestKind := GetActualKindName(pyTestKind, args)
+	kinds := []string{actualPyBinaryKind, actualPyLibraryKind, actualPyTestKind}
+
+	for _, existingRule := range args.File.Rules {
 		if !slices.Contains(kinds, existingRule.Kind()) {
 			continue
 		}
