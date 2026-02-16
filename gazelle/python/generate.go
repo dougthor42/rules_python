@@ -575,10 +575,6 @@ func (py *Python) getRulesWithInvalidSrcs(args language.GenerateArgs, validFiles
 		return strings.HasPrefix(src, "@") || strings.HasPrefix(src, "//") || strings.HasPrefix(src, ":")
 	}
 	for _, existingRule := range args.File.Rules {
-		actualPyBinaryKind := GetActualKindName(pyBinaryKind, args)
-		if existingRule.Kind() != actualPyBinaryKind {
-			continue
-		}
 		var hasValidSrcs bool
 		for _, src := range existingRule.AttrStrings("srcs") {
 			if isTarget(src) {
@@ -591,7 +587,7 @@ func (py *Python) getRulesWithInvalidSrcs(args language.GenerateArgs, validFiles
 			}
 		}
 		if !hasValidSrcs {
-			invalidRules = append(invalidRules, newTargetBuilder(pyBinaryKind, existingRule.Name(), "", "", nil, false).build())
+			invalidRules = append(invalidRules, newTargetBuilder(existingRule.Kind(), existingRule.Name(), "", "", nil, false).build())
 		}
 	}
 	return invalidRules
