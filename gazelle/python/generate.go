@@ -22,6 +22,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"slices"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -575,6 +576,14 @@ func (py *Python) getRulesWithInvalidSrcs(args language.GenerateArgs, validFiles
 		return strings.HasPrefix(src, "@") || strings.HasPrefix(src, "//") || strings.HasPrefix(src, ":")
 	}
 	for _, existingRule := range args.File.Rules {
+		actualPyBinaryKind := GetActualKindName(pyBinaryKind, args)
+		actualPyLibraryKind := GetActualKindName(pyLibraryKind, args)
+		actualPyTestKind := GetActualKindName(pyTestKind, args)
+
+		kinds := []string{actualPyBinaryKind, actualPyLibraryKind, actualPyTestKind}
+		if !slices.Contains(kinds, existingRule.Kind()) {
+			continue
+		}
 		var hasValidSrcs bool
 		for _, src := range existingRule.AttrStrings("srcs") {
 			if isTarget(src) {
