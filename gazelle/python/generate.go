@@ -48,6 +48,12 @@ var (
 	buildFilenames = []string{"BUILD", "BUILD.bazel"}
 )
 
+func debugRule(r *rule.Rule) {
+	f := rule.EmptyFile("debug.build", "")
+	r.Insert(f)
+	log.Printf("DEBUG RULE OUTPUT:\n%s", string(f.Format()))
+}
+
 func GetActualKindName(kind string, args language.GenerateArgs) string {
 	if kindOverride, ok := args.Config.KindMap[kind]; ok {
 		return kindOverride.KindName
@@ -299,6 +305,7 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 					setAnnotations(*annotations).
 					build()
 
+				// debugRule(pyBinary)
 				if pyBinary.IsEmpty(py.Kinds()[pyBinary.Kind()]) {
 					result.Empty = append(result.Empty, pyBinary)
 				} else {
@@ -350,6 +357,7 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 			setAnnotations(*annotations).
 			build()
 
+		// debugRule(pyLibrary)
 		if pyLibrary.IsEmpty(py.Kinds()[pyLibrary.Kind()]) {
 			result.Empty = append(result.Empty, pyLibrary)
 		} else {
@@ -538,6 +546,7 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 	}
 
 	for _, pyTestTarget := range pyTestTargets {
+		// log.Printf("WARN: %+v\n", pyTestTarget)
 		shouldAddConftest := pyTestTarget.annotations.includePytestConftest == nil ||
 			*pyTestTarget.annotations.includePytestConftest
 
@@ -553,12 +562,15 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 		}
 		pyTest := pyTestTarget.build()
 
-		if pyTest.IsEmpty(py.Kinds()[pyTest.Kind()]) {
-			result.Empty = append(result.Empty, pyTest)
-		} else {
-			result.Gen = append(result.Gen, pyTest)
-			result.Imports = append(result.Imports, pyTest.PrivateAttr(config.GazelleImportsKey))
-		}
+		// log.Print("\ngazelle: WARN:\n")
+		// log.Printf("WARN: %+v\n", pyTest)
+		// debugRule(pyTest)
+		// if pyTest.IsEmpty(py.Kinds()[pyTest.Kind()]) {
+		//     result.Empty = append(result.Empty, pyTest)
+		// } else {
+		result.Gen = append(result.Gen, pyTest)
+		result.Imports = append(result.Imports, pyTest.PrivateAttr(config.GazelleImportsKey))
+		// }
 	}
 	if !collisionErrors.Empty() {
 		it := collisionErrors.Iterator()

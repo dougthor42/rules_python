@@ -81,10 +81,10 @@ var pyKinds = map[string]rule.KindInfo{
 	pyTestKind: {
 		MatchAny: false,
 		NonEmptyAttrs: map[string]bool{
-			"deps":    true,
-			"main":    true,
+			// "deps":    true,
+			// "main":    true,
 			"srcs":    true,
-			"imports": true,
+			// "imports": true,
 		},
 		SubstituteAttrs: map[string]bool{},
 		MergeableAttrs: map[string]bool{
