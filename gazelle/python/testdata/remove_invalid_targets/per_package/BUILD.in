@@ -1,0 +1,37 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+# gazelle:python_generation_mode package
+
+py_binary(
+    name = "my_bin",
+    srcs = ["my_bin.py"],
+    visibility = ["//:__subpackages__"],
+)
+
+py_binary(
+    name = "invalid_my_bin",
+    srcs = ["invalid_my_bin.py"],
+    visibility = ["//:__subpackages__"],
+)
+
+py_test(
+    name = "invalid_my_test",
+    srcs = ["invalid_my_test.py"],
+)
+
+py_library(
+    name = "per_package",
+    srcs = [
+        "__init__.py",
+        "invalid_my_bin.py",
+        "invalid_my_lib.py",
+        "my_bin.py",
+        "my_lib.py",
+    ],
+    visibility = ["//:__subpackages__"],
+)
+
+py_test(
+    name = "my_test",
+    srcs = ["my_test.py"],
+)
