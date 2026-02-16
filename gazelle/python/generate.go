@@ -22,7 +22,6 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
-	"slices"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -256,14 +255,9 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 	}
 
 	collisionErrors := singlylinkedlist.New()
-	// Create a validFilesMap of mainModules to validate if python macros have valid srcs.
-	validFilesMap := make(map[string]struct{})
 
 	appendPyLibrary := func(srcs *treeset.Set, pyLibraryTargetName string) {
 		allDeps, mainModules, annotations, err := parser.parse(srcs)
-		for name := range mainModules {
-			validFilesMap[name] = struct{}{}
-		}
 		if err != nil {
 			log.Fatalf("ERROR: %v\n", err)
 		}
@@ -304,8 +298,13 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 					generateImportsAttribute().
 					setAnnotations(*annotations).
 					build()
-				result.Gen = append(result.Gen, pyBinary)
-				result.Imports = append(result.Imports, pyBinary.PrivateAttr(config.GazelleImportsKey))
+
+				if pyBinary.IsEmpty(py.Kinds()[pyBinary.Kind()]) {
+					result.Empty = append(result.Empty, pyBinary)
+				} else {
+					result.Gen = append(result.Gen, pyBinary)
+					result.Imports = append(result.Imports, pyBinary.PrivateAttr(config.GazelleImportsKey))
+				}
 			}
 		}
 
@@ -411,8 +410,12 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 
 		pyBinary := pyBinaryTarget.build()
 
-		result.Gen = append(result.Gen, pyBinary)
-		result.Imports = append(result.Imports, pyBinary.PrivateAttr(config.GazelleImportsKey))
+		if pyBinary.IsEmpty(py.Kinds()[pyBinary.Kind()]) {
+			result.Empty = append(result.Empty, pyBinary)
+		} else {
+			result.Gen = append(result.Gen, pyBinary)
+			result.Imports = append(result.Imports, pyBinary.PrivateAttr(config.GazelleImportsKey))
+		}
 	}
 
 	var conftest *rule.Rule
@@ -449,8 +452,12 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 
 		conftest = conftestTarget.build()
 
-		result.Gen = append(result.Gen, conftest)
-		result.Imports = append(result.Imports, conftest.PrivateAttr(config.GazelleImportsKey))
+		if conftest.IsEmpty(py.Kinds()[conftest.Kind()]) {
+			result.Empty = append(result.Empty, conftest)
+		} else {
+			result.Gen = append(result.Gen, conftest)
+			result.Imports = append(result.Imports, conftest.PrivateAttr(config.GazelleImportsKey))
+		}
 	}
 
 	var pyTestTargets []*targetBuilder
@@ -546,11 +553,13 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 		}
 		pyTest := pyTestTarget.build()
 
-		result.Gen = append(result.Gen, pyTest)
-		result.Imports = append(result.Imports, pyTest.PrivateAttr(config.GazelleImportsKey))
+		if pyTest.IsEmpty(py.Kinds()[pyTest.Kind()]) {
+			result.Empty = append(result.Empty, pyTest)
+		} else {
+			result.Gen = append(result.Gen, pyTest)
+			result.Imports = append(result.Imports, pyTest.PrivateAttr(config.GazelleImportsKey))
+		}
 	}
-	emptyRules := py.getRulesWithInvalidSrcs(args, validFilesMap)
-	result.Empty = append(result.Empty, emptyRules...)
 	if !collisionErrors.Empty() {
 		it := collisionErrors.Iterator()
 		for it.Next() {
@@ -560,47 +569,6 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 	}
 
 	return result
-}
-
-// getRulesWithInvalidSrcs checks existing Python rules in the BUILD file and return the rules with invalid source files.
-// Invalid source files are files that do not exist or not a target.
-func (py *Python) getRulesWithInvalidSrcs(args language.GenerateArgs, validFilesMap map[string]struct{}) (invalidRules []*rule.Rule) {
-	if args.File == nil {
-		return
-	}
-	for _, file := range args.GenFiles {
-		validFilesMap[file] = struct{}{}
-	}
-
-	isTarget := func(src string) bool {
-		return strings.HasPrefix(src, "@") || strings.HasPrefix(src, "//") || strings.HasPrefix(src, ":")
-	}
-
-	actualPyBinaryKind := GetActualKindName(pyBinaryKind, args)
-	actualPyLibraryKind := GetActualKindName(pyLibraryKind, args)
-	actualPyTestKind := GetActualKindName(pyTestKind, args)
-	kinds := []string{actualPyBinaryKind, actualPyLibraryKind, actualPyTestKind}
-
-	for _, existingRule := range args.File.Rules {
-		if !slices.Contains(kinds, existingRule.Kind()) {
-			continue
-		}
-		var hasValidSrcs bool
-		for _, src := range existingRule.AttrStrings("srcs") {
-			if isTarget(src) {
-				hasValidSrcs = true
-				break
-			}
-			if _, ok := validFilesMap[src]; ok {
-				hasValidSrcs = true
-				break
-			}
-		}
-		if !hasValidSrcs {
-			invalidRules = append(invalidRules, newTargetBuilder(existingRule.Kind(), existingRule.Name(), "", "", nil, false).build())
-		}
-	}
-	return invalidRules
 }
 
 // isBazelPackage determines if the directory is a Bazel package by probing for
