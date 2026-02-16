@@ -1,13 +1,4 @@
-load("@rules_python//python:defs.bzl", "py_library", "py_test")
-
-py_library(
-    name = "deps_with_no_srcs_library",
-    deps = [
-        "//:remove_invalid_library",
-        "@pypi//bar",
-        "@pypi//foo",
-    ],
-)
+load("@rules_python//python:defs.bzl", "py_test")
 
 py_test(
     name = "my_test",
